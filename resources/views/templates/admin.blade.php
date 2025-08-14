@@ -96,7 +96,11 @@
         </div> --}}
 
         <div class="flex items-center gap-4">
-          <div class="bg-white/60 rounded-full px-3 py-1 text-sm shadow hidden sm:block">Minggu, <span id="date-badge">20 Juli 2025</span></div>
+          @php
+            $currentDate = \Carbon\Carbon::now('Asia/Jayapura')->locale('id');
+            $formattedDate = $currentDate->translatedFormat('l, j F Y');
+          @endphp
+          <div class="bg-white/60 rounded-full px-3 py-1 text-sm shadow hidden sm:block" id="date-badge">{{ $formattedDate }}</div>
           <div class="text-right hidden sm:block">
             <div class="text-xs text-gray-500">Admin</div>
             <div class="text-sm font-medium">Administrator</div>
