@@ -26,7 +26,7 @@
   <div class="flex min-h-screen">
 
     {{-- Sidebar --}}
-    <aside id="sidebar" class="w-72 bg-white/60 backdrop-blur-md border-r hidden md:block">
+    <aside id="sidebar" class="w-72 bg-white/60 backdrop-blur-md border-r hidden md:block transition-all duration-300">
       <div class="px-6 py-6">
         <a href="#" class="flex items-center gap-3">
           <div class="w-10 h-10 bg-gradient-to-br from-pink-400 to-indigo-400 rounded-lg flex items-center justify-center text-white font-bold">KI</div>
@@ -53,52 +53,48 @@
       </div>
     </aside>
 
-    {{-- Mobile toggle --}}
-    <div class="md:hidden fixed top-4 left-4 z-40">
-      <button id="btn-toggle" class="bg-white p-2 rounded-lg shadow">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-    </div>
-
     {{-- Main --}}
     <div class="flex-1 flex flex-col">
 
       {{-- Top banner --}}
-      <header class="px-6 py-6 bg-gradient-to-r from-indigo-100 via-purple-50 to-pink-50 border-b">
-        <div class="max-w-7xl mx-auto">
-          <div class="flex items-center justify-between gap-4">
+      <header class="px-4 sm:px-6 py-4 sm:py-6 bg-gradient-to-r from-indigo-100 via-purple-50 to-pink-50 border-b">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+
+          {{-- Left: Hamburger + Title --}}
+          <div class="flex items-center gap-3">
+            <button id="btn-toggle" class="md:hidden bg-white p-2 rounded-lg shadow">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M4 6h16M4 12h16M4 18h16"
+                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
             <div>
-              <h1 class="text-2xl font-bold text-gray-800">Dashboard Penghuni</h1>
-              <div class="text-sm text-gray-500">Kos Ibu Haji — Kamar {{ Auth::user()->kamar->nomor_kamar ?? '-' }}</div>
+              <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Dashboard Penghuni</h1>
+              <div class="text-xs sm:text-sm text-gray-500">Kos Ibu Haji — Kamar {{ Auth::user()->kamar->nomor_kamar ?? '-' }}</div>
+            </div>
+          </div>
+
+          {{-- Right: Date & Profile --}}
+          <div class="flex items-center gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
+            @php
+              $currentDate = \Carbon\Carbon::now('Asia/Jayapura')->locale('id');
+              $formattedDate = $currentDate->translatedFormat('l, j F Y');
+            @endphp
+            <div class="bg-white/60 rounded-full px-3 py-1 text-xs sm:text-sm shadow hidden sm:block" id="date-badge">{{ $formattedDate }}</div>
+            
+            <div class="text-right hidden sm:block">
+              <div class="text-xs text-gray-500">Penghuni</div>
+              <div class="text-sm font-medium">{{ auth()->user()->name ?? 'User' }}</div>
             </div>
 
-            {{-- <div class="flex-1 max-w-xl mx-6">
-              <div class="relative">
-                <input type="search" placeholder="Cari penghuni, kamar, atau transaksi..." class="w-full rounded-full pl-4 pr-12 py-3 border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white/90 text-sm shadow-sm">
-                <svg class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35" stroke-width="1.5"/></svg>
-              </div>
-            </div> --}}
-
-            <div class="flex items-center gap-4">
-              @php
-                $currentDate = \Carbon\Carbon::now('Asia/Jayapura')->locale('id');
-                $formattedDate = $currentDate->translatedFormat('l, j F Y');
-              @endphp
-              <div class="bg-white/60 rounded-full px-3 py-1 text-sm shadow hidden sm:block" id="date-badge">{{ $formattedDate }}</div>
-              
-              <div class="text-right hidden sm:block">
-                <div class="text-xs text-gray-500">Penghuni</div>
-                <div class="text-sm font-medium">{{ auth()->user()->name ?? 'User' }}</div>
-              </div>
-
-              <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}" class="w-10 h-10 rounded-full border"/>
-            </div>
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}"
+              class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border" />
           </div>
         </div>
       </header>
 
       {{-- Content area --}}
-      <main class="p-6 overflow-auto">
+      <main class="p-4 sm:p-6 overflow-auto">
         <div class="max-w-7xl mx-auto space-y-6">
           @yield('content')
         </div>
@@ -107,21 +103,16 @@
   </div>
 
 <script>
-  // date badge (if needed in content)
-  document.querySelectorAll('[data-now]').forEach(el=>{
-    el.textContent = new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  });
-
-  // mobile sidebar toggle
   const btn = document.getElementById('btn-toggle');
   const sidebar = document.getElementById('sidebar');
+
   btn?.addEventListener('click', () => {
     sidebar.classList.toggle('hidden');
-    sidebar.classList.toggle('absolute');
-    sidebar.classList.toggle('z-50');
-    sidebar.classList.toggle('left-0');
+    sidebar.classList.toggle('fixed');
     sidebar.classList.toggle('top-0');
+    sidebar.classList.toggle('left-0');
     sidebar.classList.toggle('h-screen');
+    sidebar.classList.toggle('z-50');
   });
 </script>
 @yield('scripts')
