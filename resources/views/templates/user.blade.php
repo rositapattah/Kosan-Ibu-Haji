@@ -69,7 +69,7 @@
           <div class="flex items-center justify-between gap-4">
             <div>
               <h1 class="text-2xl font-bold text-gray-800">Dashboard Penghuni</h1>
-              <div class="text-sm text-gray-500">Kos Ibu Haji — Kamar {{ $kamar->nomor_kamar ?? '-' }}</div>
+              <div class="text-sm text-gray-500">Kos Ibu Haji — Kamar {{ Auth::user()->kamar->nomor_kamar ?? '-' }}</div>
             </div>
 
             {{-- <div class="flex-1 max-w-xl mx-6">
@@ -80,11 +80,12 @@
             </div> --}}
 
             <div class="flex items-center gap-4">
-              {{-- <button class="relative p-2 bg-white rounded-full shadow-sm">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118.6 14.6V11a6 6 0 10-12 0v3.6c0 .538-.214 1.055-.595 1.435L4 17h5" stroke-width="1.5"/></svg>
-                <span class="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full px-1.5">21</span>
-              </button> --}}
-
+              @php
+                $currentDate = \Carbon\Carbon::now('Asia/Jayapura')->locale('id');
+                $formattedDate = $currentDate->translatedFormat('l, j F Y');
+              @endphp
+              <div class="bg-white/60 rounded-full px-3 py-1 text-sm shadow hidden sm:block" id="date-badge">{{ $formattedDate }}</div>
+              
               <div class="text-right hidden sm:block">
                 <div class="text-xs text-gray-500">Penghuni</div>
                 <div class="text-sm font-medium">{{ auth()->user()->name ?? 'User' }}</div>

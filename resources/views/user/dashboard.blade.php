@@ -47,24 +47,44 @@
     </div>
 
     {{-- Laporan --}}
-    <div class="bg-white/90 rounded-xl shadow-soft p-5">
-      <div class="flex items-center justify-between">
+    <div class="bg-white/90 rounded-xl shadow-soft p-6 flex flex-col items-center justify-center">
+      <div class="w-full flex items-start justify-between">
         <h3 class="font-semibold text-gray-700">Laporan</h3>
         <div class="text-sm text-gray-400">⚠️</div>
       </div>
 
-      <p class="mt-4 text-sm text-gray-500">Jumlah laporan</p>
-      <div class="text-lg font-bold">{{ $laporanCount ?? 0 }}</div>
+      <div class="mt-4 text-indigo-500 text-3xl font-extrabold">
+        {{ $laporanCount ?? 0 }}
+      </div>
+      <div class="text-xs text-gray-400 mt-1">Jumlah Laporan</div>
 
-      <a href="{{ route('laporan.index') }}" class="mt-5 inline-block px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 text-sm">Laporkan Kerusakan</a>
+      <a href="{{ route('laporan.index') }}"
+        class="mt-6 w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-white bg-gradient-to-r from-yellow-500 to-red-500 shadow hover:opacity-95">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M12 20h9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 4h9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 9h16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 15h16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Laporkan Kerusakan
+      </a>
     </div>
   </div>
-
+  @php
+    $totalBelum = 0;
+  @endphp
+  @foreach ($tagihanList as $tagihan)
+    @if (Str::lower($tagihan->status) === 'belum bayar')
+      @php
+        $totalBelum += $tagihan->jumlah_tagihan;
+      @endphp
+    @endif
+  @endforeach
   {{-- Detail Tagihan list (large panel) --}}
   <div class="bg-white/90 rounded-xl shadow-soft p-6">
     <div class="flex items-center justify-between mb-4">
       <h4 class="text-lg font-semibold text-gray-700">Detail Tagihan</h4>
-      <div class="text-sm text-gray-400">{{ $tagihanList->sum('jumlah_tagihan') ?? 0 }} item</div>
+      <div class="text-sm text-gray-400">Rp. {{ number_format($totalBelum, '0', '.', ',') ?? 0 }}</div>
     </div>
 
     <div class="space-y-3">
@@ -81,8 +101,8 @@
             </div>
 
             <div>
-              <div class="font-medium text-gray-700">{{ $item->nama }}</div>
-              <div class="text-xs text-gray-500">Jatuh tempo: {{ \Carbon\Carbon::parse($item->jatuh_tempo)->format('d/m/Y') }}</div>
+              <div class="font-medium text-gray-700">{{ \Carbon\Carbon::parse($item->bulan_tagih, 'Asia/Jayapura')->translatedFormat('F Y') }}</div>
+              {{-- <div class="text-xs text-gray-500">Jatuh tempo: {{ \Carbon\Carbon::parse($item->jatuh_tempo)->format('d/m/Y') }}</div> --}}
             </div>
           </div>
 
